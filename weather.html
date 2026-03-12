@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Weather Dashboard</title>
+    <style>
+      body {
+        background-color: aqua;
+      }
+      .heading {
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        display: flex;
+        justify-content: center;
+      }
+      .card {
+        
+        background-color: rgb(8, 210, 18);
+        padding:10%;
+        margin: 3%;
+        border-radius: 10%;
+        
+      }
+      .card:hover{
+        background-color: rgba(30, 0, 255, 0.807);
+        font-weight: bold;
+        color:whitesmoke;
+      }
+      .button {
+        display: flex;
+        justify-content: center;
+      }
+      #btn {
+        background-color: black;
+        color:rgb(240,240,240);
+        font-weight: bold;
+
+        padding: 2% 5%;
+        
+        border:none;
+        border-radius: 50px;
+        cursor: pointer;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <div class="heading">
+      <h1>Weather Dashboard</h1>
+    </div>
+
+    <div class="button">
+      <button id="btn">Get Weather</button>
+    </div>
+
+    <div class="container">
+      <div class="card" id="delhi">Delhi</div>
+      <div class="card" id="mumbai">Mumbai</div>
+      <div class="card" id="bangalore">Bangalore</div> 
+    </div>
+  </body>
+  <script>
+    const btn = document.getElementById("btn");
+
+    btn.addEventListener("click", getWeather);
+
+    function getWeather() {
+      const delhi = fetch(
+        "https://api.open-meteo.com/v1/forecast?latitude=28.61&longitude=77.23&current_weather=true",
+      );
+      const mumbai = fetch(
+        "https://api.open-meteo.com/v1/forecast?latitude=19.07&longitude=72.87&current_weather=true",
+      );
+      const bangalore = fetch(
+        "https://api.open-meteo.com/v1/forecast?latitude=12.97&longitude=77.59&current_weather=true",
+      );
+
+      Promise.all([delhi, mumbai, bangalore]) 
+        .then((responses) => {
+          return Promise.all(responses.map((res) => res.json()));
+        })
+        .then((data) => {
+          const [delhiData, mumbaiData, bangaloreData] = data;
+
+          document.getElementById("delhi").innerHTML =
+            `Delhi <br> 🌡 ${delhiData.current_weather.temperature}°C`;
+
+          document.getElementById("mumbai").innerHTML = 
+            `Mumbai <br> 🌡 ${mumbaiData.current_weather.temperature}°C`;
+
+          document.getElementById("bangalore").innerHTML =
+            `Bangalore <br> 🌡 ${bangaloreData.current_weather.temperature}°C`;
+        })
+        .catch((err) => {
+          console.log("Error:", err);
+        }); 
+       
+    }
+  </script>
+</html>
